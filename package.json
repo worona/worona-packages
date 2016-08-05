@@ -1,7 +1,7 @@
 {
   "name": "worona-packages",
   "version": "1.0.0",
-  "description": "NPM module with config files and utils for the Worona packages",
+  "description": "NPM module with config files and utils for Worona packages",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,16 +21,11 @@
   },
   "homepage": "https://github.com/worona/worona-packages#readme",
   "dependencies": {
-    "webpack": "^1.13.1",
     "webpack-stats-plugin": "^0.1.3",
     "yargs": "^4.8.1"
   },
-  "worona": {
-    "dev": {
-      "files": []
-    },
-    "prod": {
-      "files": []
-    }
-  }
+  "peerDependencies": {
+    "webpack": "^1.13.1"
+  },
+  "devDependencies": {}
 }
