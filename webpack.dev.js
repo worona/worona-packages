@@ -16,6 +16,7 @@ module.exports = function(packageJson) {
       library: worona.slug + '_' + worona.service + '_' + worona.type,
       libraryTarget: 'commonjs2',
       hashDigestLength: 32,
+      chunkFilename: '[name].[chunkhash].js',
     },
     module: {
       loaders: [
@@ -25,23 +26,42 @@ module.exports = function(packageJson) {
           exclude: /(node_modules)/,
         },
         {
+          test: /\.css$/,
+          loaders: [
+            'style-loader',
+            'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+            'postcss-loader',
+          ],
+          exclude: /(node_modules)/,
+        },
+        {
+          test: /\.s[ac]ss$/,
+          loaders: [
+            'style-loader',
+            'css-loader',
+            'sass-loader',
+          ],
+        },
+        {
           test: /\.(png|jpg|gif)$/,
-          loader: 'file-loader?name=images/[name].[chunkhash].[ext]',
+          loader: 'file-loader?name=images/[name].[hash].[ext]',
           exclude: /(node_modules)/,
         },
         {
           test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-          loader: 'url-loader?limit=10000&minetype=application/font-woff&name=fonts/[name].[chunkhash].[ext]',
-          exclude: /(node_modules)/,
+          loader: 'url-loader?limit=10000&minetype=application/font-woff&name=fonts/[name].[hash].[ext]',
         },
         {
           test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-          loader: 'file-loader?name=fonts/[name].[chunkhash].[ext]',
-          exclude: /(node_modules)/,
+          loader: 'file-loader?name=fonts/[name].[hash].[ext]',
+        },
+        {
+          test: /locales\/.+\.json$/,
+          loader: 'bundle-loader?name=locales/[name]',
         },
         {
           test: /\.json$/,
-          loader: 'json-loader?name=jsons/[name].[chunkhash].[ext]',
+          loader: 'json-loader?name=jsons/[name].[hash].[ext]',
           exclude: /(node_modules)/,
         },
       ],
@@ -60,20 +80,29 @@ module.exports = function(packageJson) {
       }),
       new StatsWriterPlugin({
         filename: '../../package.json',
-        fields: ['chunks'],
+        fields: ['assets', 'chunks'],
         transform: function (data) {
           worona.dev = worona.dev || {};
           worona.dev.files = [];
-          data.chunks.forEach(chunk => chunk.files.forEach((file, index) => {
-              const chunkName = chunk.names[index];
-              if (chunkName === 'main') {
+          data.assets.forEach(function(asset) {
+            var hash;
+            try {
+              hash = /\.([a-z0-9]{32})\.\w+?$/.exec(asset.name)[1];
+            } catch (error) {
+              throw new Error('Hash couldn\'t be extracted from ' + asset.name);
+            }
+            worona.dev.files.push({
+              file: packageJson.name + '/dist/dev/' + asset.name,
+              hash: hash,
+            });
+          });
+          data.chunks.forEach(function(chunk) {
+            chunk.files.forEach(function(file, index) {
+              if (chunk.names[index] === 'main') {
                 worona.dev.main = packageJson.name + '/dist/dev/' + file;
               }
-              worona.dev.files.push({
-                file: packageJson.name + '/dist/dev/' + file,
-                hash: chunk.hash,
-                chunkName: chunkName });
-            }));
+            });
+          });
           return JSON.stringify(packageJson, null, 2);
         }
       }),
