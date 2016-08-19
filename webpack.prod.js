@@ -2,6 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var StatsWriterPlugin = require('webpack-stats-plugin').StatsWriterPlugin;
+var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 module.exports = function(packageJson) {
   var worona = packageJson.worona = packageJson.worona || {};
@@ -73,6 +74,7 @@ module.exports = function(packageJson) {
     stats: { children: false },
     plugins: [
       new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('production') } }),
+      new LodashModuleReplacementPlugin(),
       new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.OccurrenceOrderPlugin(),
