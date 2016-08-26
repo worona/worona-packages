@@ -75,7 +75,7 @@ module.exports = function(packageJson) {
     stats: { children: false },
     plugins: [
       new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('production') } }),
-      new LodashModuleReplacementPlugin(),
+      // new LodashModuleReplacementPlugin(),
       new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.OccurrenceOrderPlugin(),
