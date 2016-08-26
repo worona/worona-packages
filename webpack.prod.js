@@ -1,3 +1,4 @@
+var env = 'prod';
 var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
@@ -12,8 +13,8 @@ module.exports = function(packageJson) {
       main: path.resolve('src', 'index.js'),
     },
     output: {
-      path: path.resolve('dist', 'prod'),
-      publicPath: 'https://cdn.worona.io/packages/' + packageJson.name + '/dist/prod/',
+      path: path.resolve('dist', env),
+      publicPath: 'https://cdn.worona.io/packages/' + packageJson.name + '/dist/' + env + '/',
       filename: 'js/' + worona.slug + '.' + worona.service + '.' + worona.type + '.[chunkhash].js',
       library: worona.slug + '_' + worona.service + '_' + worona.type,
       libraryTarget: 'commonjs2',
@@ -81,30 +82,36 @@ module.exports = function(packageJson) {
       new ExtractTextPlugin('css/' + worona.slug + '.styles.[contenthash].css'),
       new webpack.DllReferencePlugin({
         context: '../..',
-        manifest: require('./prod-vendors-manifest.json'),
+        manifest: require('./' + env + '-vendors-manifest.json'),
       }),
       new StatsWriterPlugin({
         filename: '../../package.json',
         fields: ['chunks', 'assets'],
         transform: function (data) {
-          worona.prod = worona.prod || {};
-          worona.prod.files = [];
+          worona[env] = worona[env] || {};
+          worona[env].files = [];
+          worona[env].assets = {};
           data.assets.forEach(function(asset) {
-            var hash;
+            var hash, ext, type;
             try {
               hash = /\.([a-z0-9]{32})\.\w+?$/.exec(asset.name)[1];
+              type = /^(\w+)\//.exec(asset.name)[1];
             } catch (error) {
-              throw new Error('Hash couldn\'t be extracted from ' + asset.name);
+              throw new Error('Hash or type couldn\'t be extracted from ' + asset.name);
             }
-            worona.prod.files.push({
-              file: packageJson.name + '/dist/prod/' + asset.name,
+            if ((type === 'fonts') || (type === 'css')) {
+              worona[env].assets[type] = worona[env].assets[type] || [];
+              worona[env].assets[type].push(packageJson.name + '/dist/' + env + '/' + asset.name);
+            }
+            worona[env].files.push({
+              file: packageJson.name + '/dist/' + env + '/' + asset.name,
               hash: hash,
             });
           });
           data.chunks.forEach(function(chunk) {
             chunk.files.forEach(function(file, index) {
               if (chunk.names[index] === 'main') {
-                worona.prod.main = packageJson.name + '/dist/prod/' + file;
+                worona[env].main = packageJson.name + '/dist/' + env + '/' + file;
               }
             });
           });
