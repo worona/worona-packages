@@ -99,7 +99,7 @@ module.exports = function(packageJson) {
             } catch (error) {
               throw new Error('Hash or type couldn\'t be extracted from ' + asset.name);
             }
-            if ((type === 'fonts') || (type === 'css')) {
+            if (type === 'css') {
               worona[env].assets[type] = worona[env].assets[type] || [];
               worona[env].assets[type].push(packageJson.name + '/dist/' + env + '/' + asset.name);
             }
