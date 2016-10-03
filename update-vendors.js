@@ -1,6 +1,6 @@
 var https = require('https');
 var fs = require('fs');
-var argv = require('yargs').argv;
+var entries = require('./webpack-entries');
 
 var download = function(url, dest, cb) {
   var file = fs.createWriteStream(dest);
@@ -15,12 +15,13 @@ var download = function(url, dest, cb) {
   });
 };
 
-download(
-  'https://cdn.worona.io/packages/core-' + argv.service + '-worona/dist/prod/vendors/vendors-manifest.json',
-  'node_modules/worona-packages/prod-vendors-manifest.json'
-);
-
-download(
-  'https://cdn.worona.io/packages/core-' + argv.service + '-worona/dist/dev/vendors/vendors-manifest.json',
-  'node_modules/worona-packages/dev-vendors-manifest.json'
-);
+entries().forEach(function(entry){
+  download(
+    'https://cdn.worona.io/packages/core-' + entry + '-worona/dist/prod/vendors/vendors-manifest.json',
+    'node_modules/worona-packages/prod-' + entry + '-vendors-manifest.json'
+  );
+  download(
+    'https://cdn.worona.io/packages/core-' + entry + '-worona/dist/dev/vendors/vendors-manifest.json',
+    'node_modules/worona-packages/dev-' + entry + '-vendors-manifest.json'
+  );
+});
