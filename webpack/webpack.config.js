@@ -1,7 +1,7 @@
 var path = require('path');
 var config = require('yargs').argv;
-var plugins = require('./webpack/plugins');
-var loaders = require('./webpack/loaders');
+var plugins = require('./plugins');
+var loaders = require('./loaders');
 
 var pluginsArr = [
   plugins.definePlugin(config),
