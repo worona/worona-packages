@@ -1,55 +1,48 @@
 var path = require('path');
-var webpack = require('webpack');
-var argv = require('yargs').argv;
-var StatsWriterPlugin = require('webpack-stats-plugin').StatsWriterPlugin;
-var entries = require('./webpack-entries');
-var loaders = require('./webpack-loaders');
-var plugins = require('./webpack-plugins');
-var output = require('./webpack-output');
+var config = require('yargs').argv;
+var plugins = require('./webpack/plugins');
+var loaders = require('./webpack/loaders');
 
-module.exports = function(packageJson) {
-  var worona = packageJson.worona = packageJson.worona || {};
-  var entriesArr = argv.entry ? [argv.entry] : entries();
+var pluginsArr = [
+  plugins.definePlugin(config),
+  plugins.dllReferencePlugin(config),
+  plugins.lodashModuleReplacementPlugin(config),
+  plugins.contextReplacementPlugin(),
+  plugins.htmlWebpackPlugin(config),
+].filter(function(plugin) { return typeof plugin !== 'undefined'; });
 
-  new Error('VER SI SE PUEDE GENERAR SÓLO UN WEBPACK (PARA QUE SALGA EL RESTULTADO) Y METER CADA ENTRY EN SU CARPETA EN DIST');
+var loadersArr = [
+  loaders.babel(config),
+  loaders.css(config),
+  loaders.sass(config),
+  loaders.image(config),
+  loaders.font(config),
+  loaders.locale(config),
+  loaders.json(config),
+].filter(function(loader) { return typeof loader !== 'undefined'; });
 
-  return entriesArr.map(function(entry) {
-    var options = {
-      env: argv.env,
-      entry: entry,
-      worona: worona,
-      packageJson: packageJson,
-    }
-
-    var loadersArr = [
-      loaders.babel(options),
-      loaders.css(options),
-      loaders.sass(options),
-      loaders.image(options),
-      loaders.font(options),
-      loaders.locale(options),
-      loaders.json(options),
-    ].filter(function(loader) { return typeof loader !== 'undefined'; });
-
-    var pluginsArr = [
-      plugins.definePlugin(options),
-      plugins.lodashModuleReplacementPlugin(options),
-      plugins.uglifyJsPlugin(options),
-      plugins.dedupePlugin(options),
-      plugins.occurrenceOrderPlugin(options),
-      plugins.extractTextPlugin(options),
-      plugins.dllReferencePlugin(options),
-      plugins.statsWriterPlugin(options),
-    ].filter(function(plugin) { return typeof plugin !== 'undefined'; });
-
-    return {
-      entry: { [entry]: path.resolve('src', entry, 'index.js') },
-      output: output(options),
-      module: { loaders: loadersArr },
-      resolve: { extensions: ['', '.js', '.jsx'] },
-      postcss: function() { return [require('postcss-cssnext')()]; },
-      stats: { children: false },
-      plugins: pluginsArr,
-    };
-  });
+module.exports = {
+  entry: { main: [
+    path.resolve('worona-packages', 'entry.js'),
+  ] },
+  output: {
+    path: path.resolve('dist'),
+    filename: 'bundle.js',
+    publicPath: '/',
+  },
+  module: { loaders: loadersArr },
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
+  },
+  // devtool: '#eval-source-map',
+  devServer: {
+    contentBase: 'dist',
+    noInfo: false,
+    inline: true,
+    port: 3333,
+    historyApiFallback: true,
+  },
+  postcss: function() { return [require('postcss-cssnext')()]; },
+  stats: { children: false },
+  plugins: pluginsArr,
 };
