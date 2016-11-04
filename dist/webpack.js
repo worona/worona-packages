@@ -15,7 +15,7 @@ exports.default = function () {
         switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return (0, _childProcessPromise.spawn)('./node_modules/.bin/webpack-dev-server', ['--config', 'worona-packages/webpack/webpack.config.js', '--name', 'core-dashboard-worona', '--entrie', 'dashboard', '--env', config.env, '--location', config.location], { stdio: 'inherit' });
+            return (0, _childProcessPromise.spawn)('./node_modules/.bin/webpack-dev-server', ['--config', 'node_modules/worona-packages/webpack/webpack.config.js', '--name', 'core-dashboard-worona', '--entrie', 'dashboard', '--env', config.env, '--location', config.location], { stdio: 'inherit' });
 
           case 2:
           case 'end':
