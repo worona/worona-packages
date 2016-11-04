@@ -3,7 +3,7 @@ import semver from 'semver';
 import { writeFileSync } from 'fs';
 import { validate as urlValidate } from 'url-regexp';
 
-export const askForWoronaInfo = async ({ packageJson }) => {
+export default async ({ packageJson }) => {
   console.log('\n');
   const npmValues = await inquirer.prompt([{
     type: 'input',

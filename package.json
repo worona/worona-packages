@@ -4,7 +4,7 @@
   "description": "NPM package with webpack for the development of worona packages",
   "main": "start.js",
   "scripts": {
-    "build": "babel build --out-file dist/start.js --presets es2015,stage-0"
+    "build": "babel build --out-dir dist"
   },
   "repository": {
     "type": "git",

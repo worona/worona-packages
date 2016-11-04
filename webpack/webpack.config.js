@@ -23,7 +23,7 @@ var loadersArr = [
 
 module.exports = {
   entry: { main: [
-    path.resolve('worona-packages', 'entry.js'),
+    path.resolve('node_modules', 'worona-packages', 'webpack', 'entry.js'),
   ] },
   output: {
     path: path.resolve('dist'),

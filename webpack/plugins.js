@@ -33,8 +33,8 @@ var htmlWebpackPlugin = function(config) {
   return new HtmlWebpackPlugin({
     inject: false,
     title: 'Worona ' + config.entrie + ' (PKG DEV)',
-    template: path.resolve('html', 'index.html'),
-    favicon: path.resolve('html', 'favicon.png'),
+    template: path.resolve('node_modules', 'worona-packages', 'webpack', 'html', 'index.html'),
+    favicon: path.resolve('node_modules', 'worona-packages', 'webpack', 'html', 'favicon.png'),
     vendorsFile: files.vendors,
     coreFile: files.core,
     devServer: 'http://localhost:3333',

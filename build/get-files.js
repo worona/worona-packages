@@ -2,7 +2,7 @@ import request from 'superagent';
 import { sync as mkdirSync } from 'mkdirp';
 import { writeFileSync } from 'fs';
 
-export const getTemporaryFiles = async ({ entrie, env }) => {
+export default async ({ entrie, env }) => {
   const path = `node_modules/.worona/${entrie}/${env}`;
   mkdirSync(path);
   console.log('Downloading the needed files... please wait.');
