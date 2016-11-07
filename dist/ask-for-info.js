@@ -14,8 +14,6 @@ var _semver = require('semver');
 
 var _semver2 = _interopRequireDefault(_semver);
 
-var _fs = require('fs');
-
 var _urlRegexp = require('url-regexp');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -26,7 +24,7 @@ exports.default = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(_ref2) {
     var packageJson = _ref2.packageJson;
 
-    var npmValues, worona, _ref3, namespace, newPackageJson;
+    var npmValues, worona, _ref3, namespace, _ref4, category, order, repo;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -57,13 +55,15 @@ exports.default = function () {
               name: 'description',
               message: 'Description:',
               validate: function validate(name) {
-                return (/^[\w\s]+$/.test(name) || 'Incorrect format. Use only letters or spaces.'
-                );
+                return name !== '' || 'Please add a description.';
               }
             }, {
               type: 'input',
               name: 'repository',
               message: 'Git repository (like https://github.com/user/repo):',
+              filter: function filter(repo) {
+                return repo.replace(/\.git$/, '');
+              },
               validate: function validate(url) {
                 return url === '' || (0, _urlRegexp.validate)(url) || 'Incorrect format. Enter a url or nothing at all.';
               }
@@ -124,10 +124,16 @@ exports.default = function () {
               choices: ['extension', 'theme'],
               message: 'Type:'
             }, {
-              type: 'list',
-              name: 'service',
+              type: 'checkbox',
+              name: 'services',
               choices: ['dashboard', 'app'],
-              message: 'Service:'
+              message: 'Service:',
+              default: function _default() {
+                return ['dashboard'];
+              },
+              validate: function validate(services) {
+                return services.length > 0 || 'Select at least one service.';
+              }
             }]);
 
           case 6:
@@ -158,6 +164,39 @@ exports.default = function () {
             worona.namespace = namespace;
 
           case 14:
+            if (!(worona.services.indexOf('dashboard') !== -1)) {
+              _context.next = 21;
+              break;
+            }
+
+            _context.next = 17;
+            return _inquirer2.default.prompt([{
+              type: 'list',
+              name: 'category',
+              choices: ['Settings', 'Themes', 'Extensions', 'Publish'],
+              message: 'Dashboard menu category:'
+            }, {
+              type: 'input',
+              name: 'order',
+              message: 'Dashboard menu order:',
+              default: 10,
+              filter: function filter(number) {
+                return parseInt(number);
+              },
+              validate: function validate(order) {
+                var number = parseInt(order);
+                return !isNaN(number) && number >= 0 && number <= 100 || 'Please enter a number between 0 and 100.';
+              }
+            }]);
+
+          case 17:
+            _ref4 = _context.sent;
+            category = _ref4.category;
+            order = _ref4.order;
+
+            worona.menu = { category: category, order: order };
+
+          case 21:
             worona.default = false;
             worona.core = false;
             worona.listed = true;
@@ -165,14 +204,18 @@ exports.default = function () {
             worona.public = true;
             worona.authors = [npmValues.author];
 
-            newPackageJson = _extends({}, packageJson, npmValues, { worona: worona, repository: { type: 'git', url: 'git+ssh://git@' + npmValues.repository } });
+            if (npmValues.repository !== '') {
+              npmValues.bugs = { url: npmValues.repository + '/issues' };
+              npmValues.homepage = npmValues.repository + '#readme';
+              repo = /\.git$/.test(npmValues.repository) ? npmValues.repository : npmValues.repository + '.git';
 
+              npmValues.repository = { type: 'git', url: 'git+' + repo };
+            }
 
-            (0, _fs.writeFileSync)('package.json', JSON.stringify(newPackageJson, null, 2));
             console.log('\n');
-            return _context.abrupt('return', worona);
+            return _context.abrupt('return', _extends({}, packageJson, npmValues, { worona: worona }));
 
-          case 24:
+          case 30:
           case 'end':
             return _context.stop();
         }

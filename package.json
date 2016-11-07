@@ -2,9 +2,10 @@
   "name": "worona-packages",
   "version": "1.2.3",
   "description": "NPM package with webpack for the development of worona packages",
-  "main": "start.js",
+  "main": "dist/start.js",
   "scripts": {
-    "build": "babel build --out-dir dist"
+    "build": "babel src --out-dir dist",
+    "debug:ask-for-info": "babel-node debug/ask-for-info.js"
   },
   "repository": {
     "type": "git",

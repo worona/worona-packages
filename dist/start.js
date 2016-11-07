@@ -6,6 +6,8 @@ require('babel-polyfill');
 
 var _yargs = require('yargs');
 
+var _fs = require('fs');
+
 var _package = require('../../../package.json');
 
 var _package2 = _interopRequireDefault(_package);
@@ -28,14 +30,14 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 var start = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-    var env, location, worona;
+    var env, location, newPackageJson, worona;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             env = _yargs.argv.env || 'dev';
             location = _yargs.argv.location || 'remote';
-            _context.t0 = _package2.default.worona;
+            _context.t0 = _package2.default;
 
             if (_context.t0) {
               _context.next = 7;
@@ -49,15 +51,18 @@ var start = function () {
             _context.t0 = _context.sent;
 
           case 7:
-            worona = _context.t0;
-            _context.next = 10;
+            newPackageJson = _context.t0;
+            worona = newPackageJson.worona;
+
+            (0, _fs.writeFileSync)('package.json', JSON.stringify(newPackageJson, null, 2));
+            _context.next = 12;
             return (0, _getFiles2.default)({ entrie: worona.service, env: env });
 
-          case 10:
-            _context.next = 12;
+          case 12:
+            _context.next = 14;
             return (0, _webpack2.default)(_extends({}, worona, { env: env, location: location }));
 
-          case 12:
+          case 14:
           case 'end':
             return _context.stop();
         }

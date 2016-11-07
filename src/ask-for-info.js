@@ -1,6 +1,5 @@
 import inquirer from 'inquirer';
 import semver from 'semver';
-import { writeFileSync } from 'fs';
 import { validate as urlValidate } from 'url-regexp';
 
 export default async ({ packageJson }) => {
@@ -20,11 +19,12 @@ export default async ({ packageJson }) => {
     type: 'input',
     name: 'description',
     message: 'Description:',
-    validate(name) { return /^[\w\s]+$/.test(name) || 'Incorrect format. Use only letters or spaces.'; },
+    validate(name) { return (name !== '') || 'Please add a description.'; },
   }, {
     type: 'input',
     name: 'repository',
     message: 'Git repository (like https://github.com/user/repo):',
+    filter(repo) { return repo.replace(/\.git$/, ''); },
     validate(url) { return (url === '' || urlValidate(url)) || 'Incorrect format. Enter a url or nothing at all.'; }
   }, {
     type: 'input',
@@ -66,10 +66,12 @@ export default async ({ packageJson }) => {
     choices: ['extension', 'theme'],
     message: 'Type:',
   }, {
-    type: 'list',
-    name: 'service',
+    type: 'checkbox',
+    name: 'services',
     choices: ['dashboard', 'app'],
     message: 'Service:',
+    default() { return ['dashboard']; },
+    validate(services) { return services.length > 0 || 'Select at least one service.'; },
   }]);
   worona.namespace = 'theme';
   if (worona.type !== 'theme') {
@@ -81,6 +83,24 @@ export default async ({ packageJson }) => {
     }]);
     worona.namespace = namespace;
   }
+  if (worona.services.indexOf('dashboard') !== -1) {
+    const { category, order } = await inquirer.prompt([{
+      type: 'list',
+      name: 'category',
+      choices: ['Settings', 'Themes', 'Extensions', 'Publish'],
+      message: 'Dashboard menu category:',
+    }, {
+      type: 'input',
+      name: 'order',
+      message: 'Dashboard menu order:',
+      default: 10,
+      filter(number) { return parseInt(number); },
+      validate(order) {
+        const number = parseInt(order);
+        return (!isNaN(number) && number >= 0 && number <= 100) || 'Please enter a number between 0 and 100.' },
+    }]);
+    worona.menu = { category, order };
+  }
   worona.default = false;
   worona.core = false;
   worona.listed = true;
@@ -88,9 +108,13 @@ export default async ({ packageJson }) => {
   worona.public = true;
   worona.authors = [npmValues.author];
 
-  const newPackageJson = { ...packageJson, ...npmValues, worona, repository: { type: 'git', url: `git+ssh://git@${npmValues.repository}` } };
+  if (npmValues.repository !== '') {
+    npmValues.bugs = { url: `${npmValues.repository}/issues` };
+    npmValues.homepage = `${npmValues.repository}#readme`;
+    const repo = /\.git$/.test(npmValues.repository) ? npmValues.repository : `${npmValues.repository}.git`;
+    npmValues.repository = { type: 'git', url: `git+${repo}` };
+  }
 
-  writeFileSync('package.json', JSON.stringify(newPackageJson, null, 2));
   console.log('\n');
-  return worona;
+  return { ...packageJson, ...npmValues, worona };
 };
