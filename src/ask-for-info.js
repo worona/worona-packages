@@ -2,6 +2,16 @@ import inquirer from 'inquirer';
 import semver from 'semver';
 import { validate as urlValidate } from 'url-regexp';
 
+const getArrayFromList = list =>
+  list.split(',')
+    .map(item => item.replace(', ', ','))
+    .map(item => item.replace(/(^\s|\s$)/g, ''))
+    .filter(item => item !== '')
+;
+
+const validateArray = (arr, rgx, msg) =>
+  arr.reduce((prev, item) => rgx.test(item) && prev, true ) || msg;
+
 export default async ({ packageJson }) => {
   console.log('\n');
   const npmValues = await inquirer.prompt([{
@@ -30,20 +40,18 @@ export default async ({ packageJson }) => {
     type: 'input',
     name: 'keywords',
     message: 'Keywords (comma separated list):',
-    filter(keywords) {
-      return keywords.split(',')
-      .map(kw => kw.replace(', ', ','))
-      .map(kw => kw.replace(/(^\s|\s$)/g, ''))
-      .filter(kw => kw !== '')
-      .concat(['worona', 'package']);
-    },
-    validate(keywords) { return keywords.reduce(
-      (prev, kw) => /^[a-z0-9\s]*$/.test(kw) && prev, true ) ||
-      'Incorrect format. Keywords should be made only of letters and numbers'; }
+    filter(keywords) { return getArrayFromList(keywords).concat(['worona', 'package']); },
+    validate(keywords) { return validateArray(keywords, /^[a-z0-9\s]*$/) ||
+      'Incorrect format. Keywords should be made only of letters and numbers'; },
   }, {
     type: 'input',
-    name: 'author',
-    message: 'Author:',
+    name: 'authors',
+    message: 'Author emails (comma seperated list):',
+    filter: getArrayFromList,
+    validate(emails) {
+      return (emails.length > 0 && validateArray(emails,/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/))
+        || 'Emails not valid');
+    },
   }, {
     type: 'input',
     name: 'license',
