@@ -95,7 +95,7 @@ export default async ({ packageJson }) => {
     const { category, order } = await inquirer.prompt([{
       type: 'list',
       name: 'category',
-      choices: ['Settings', 'Themes', 'Extensions', 'Publish'],
+      choices: ['General', 'Themes', 'Extensions', 'Publish'],
       message: 'Dashboard menu category:',
     }, {
       type: 'input',
@@ -105,7 +105,7 @@ export default async ({ packageJson }) => {
       filter(number) { return parseInt(number); },
       validate(order) {
         const number = parseInt(order);
-        return (!isNaN(number) && number >= 0 && number <= 100) || 'Please enter a number between 0 and 100.' },
+        return (!isNaN(number) && number >= 1 && number <= 100) || 'Please enter a number between 1 and 100.' },
     }]);
     worona.menu = { category, order };
   }
