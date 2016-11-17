@@ -37,7 +37,7 @@ exports.default = function () {
 
             (0, _fs.writeFileSync)(path + '/vendors-manifest.json', JSON.stringify(manifest.body, null, 2));
             _context.next = 9;
-            return (0, _superagent2.default)('https://cdn.worona.io/api/v1/settings/package-development/' + service);
+            return (0, _superagent2.default)('https://cdn.worona.io/api/v1/settings/package-development/' + service + '/' + env);
 
           case 9:
             core = _context.sent;

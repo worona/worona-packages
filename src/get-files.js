@@ -8,7 +8,7 @@ export default async ({ service, env }) => {
   console.log('Downloading the needed files... please wait.');
   const manifest = await request(`https://cdn.worona.io/packages/dist/vendors-${service}-worona/${service}/${env}/json/manifest.json`);
   writeFileSync(`${path}/vendors-manifest.json`, JSON.stringify(manifest.body, null, 2));
-  const core = await request(`https://cdn.worona.io/api/v1/settings/package-development/${service}`);
+  const core = await request(`https://cdn.worona.io/api/v1/settings/package-development/${service}/${env}`);
   writeFileSync(`${path}/core-files.json`, JSON.stringify(core.body, null, 2));
   console.log('Downloading finished.\n');
 };
