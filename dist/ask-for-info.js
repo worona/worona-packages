@@ -20,6 +20,22 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
+var getArrayFromList = function getArrayFromList(list) {
+  return list.split(',').map(function (item) {
+    return item.replace(', ', ',');
+  }).map(function (item) {
+    return item.replace(/(^\s|\s$)/g, '');
+  }).filter(function (item) {
+    return item !== '';
+  });
+};
+
+var validateArray = function validateArray(arr, rgx, msg) {
+  return arr.reduce(function (prev, item) {
+    return rgx.test(item) && prev;
+  }, true) || msg;
+};
+
 exports.default = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(_ref2) {
     var packageJson = _ref2.packageJson;
@@ -72,24 +88,19 @@ exports.default = function () {
               name: 'keywords',
               message: 'Keywords (comma separated list):',
               filter: function filter(keywords) {
-                return keywords.split(',').map(function (kw) {
-                  return kw.replace(', ', ',');
-                }).map(function (kw) {
-                  return kw.replace(/(^\s|\s$)/g, '');
-                }).filter(function (kw) {
-                  return kw !== '';
-                }).concat(['worona', 'package']);
+                return getArrayFromList(keywords).concat(['worona', 'package']);
               },
               validate: function validate(keywords) {
-                return keywords.reduce(function (prev, kw) {
-                  return (/^[a-z0-9\s]*$/.test(kw) && prev
-                  );
-                }, true) || 'Incorrect format. Keywords should be made only of letters and numbers';
+                return validateArray(keywords, /^[a-z0-9\s]*$/) || 'Incorrect format. Keywords should be made only of letters and numbers';
               }
             }, {
               type: 'input',
-              name: 'author',
-              message: 'Author:'
+              name: 'authors',
+              message: 'Author emails (comma seperated list):',
+              filter: getArrayFromList,
+              validate: function validate(emails) {
+                return emails.length > 0 && validateArray(emails, /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/) || 'Emails not valid';
+              }
             }, {
               type: 'input',
               name: 'license',
@@ -173,7 +184,7 @@ exports.default = function () {
             return _inquirer2.default.prompt([{
               type: 'list',
               name: 'category',
-              choices: ['Settings', 'Themes', 'Extensions', 'Publish'],
+              choices: ['General', 'Themes', 'Extensions', 'Publish'],
               message: 'Dashboard menu category:'
             }, {
               type: 'input',
@@ -185,7 +196,7 @@ exports.default = function () {
               },
               validate: function validate(order) {
                 var number = parseInt(order);
-                return !isNaN(number) && number >= 0 && number <= 100 || 'Please enter a number between 0 and 100.';
+                return !isNaN(number) && number >= 1 && number <= 100 || 'Please enter a number between 1 and 100.';
               }
             }]);
 

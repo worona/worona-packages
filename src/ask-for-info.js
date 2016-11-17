@@ -49,8 +49,8 @@ export default async ({ packageJson }) => {
     message: 'Author emails (comma seperated list):',
     filter: getArrayFromList,
     validate(emails) {
-      return (emails.length > 0 && validateArray(emails,/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/))
-        || 'Emails not valid');
+      return (emails.length > 0 && validateArray(emails, /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/))
+        || 'Emails not valid';
     },
   }, {
     type: 'input',
