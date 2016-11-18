@@ -34,7 +34,7 @@ exports.default = function () {
 
             console.log('\nThere is a new version of worona-packages. Updating...');
             _context.next = 8;
-            return (0, _childProcessPromise.spawn)('npm', ['install', '--save-dev', '--save-exact', 'worona-packages'], { stdio: 'inherit' });
+            return (0, _childProcessPromise.spawn)('npm', ['install', '--save-dev', '--save-exact', 'worona-packages@' + remoteVersion], { stdio: 'inherit' });
 
           case 8:
             console.log('Updating finished.\n');

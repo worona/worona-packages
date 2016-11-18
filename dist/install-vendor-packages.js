@@ -35,7 +35,7 @@ exports.default = function () {
 
             console.log('\nThere is a new version of core-' + service + '-worona. Updating...');
             _context.next = 8;
-            return (0, _childProcessPromise.spawn)('npm', ['install', '--save-dev', '--save-exact', 'core-' + service + '-worona'], { stdio: 'inherit' });
+            return (0, _childProcessPromise.spawn)('npm', ['install', '--save-dev', '--save-exact', 'core-' + service + '-worona@' + remoteVersion], { stdio: 'inherit' });
 
           case 8:
             console.log('Updating finished.\n');
