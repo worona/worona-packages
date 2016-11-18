@@ -56,7 +56,7 @@ var start = function () {
               break;
             }
 
-            console.log('Please run npm start again.');
+            console.log('Please run `npm start` again.\n');
             _context.next = 27;
             break;
 

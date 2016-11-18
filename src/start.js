@@ -11,7 +11,7 @@ import webpack from './webpack.js';
 
 const start = async () => {
   if (await checkForNewVersion({ packageJson })) {
-    console.log('Please run npm start again.');
+    console.log('Please run `npm start` again.\n');
   } else {
     const env = argv.env || 'dev';
     const location = argv.location || 'remote';
