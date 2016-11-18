@@ -24,6 +24,10 @@ var _installVendorPackages = require('./install-vendor-packages.js');
 
 var _installVendorPackages2 = _interopRequireDefault(_installVendorPackages);
 
+var _checkForNewVersion = require('./check-for-new-version.js');
+
+var _checkForNewVersion2 = _interopRequireDefault(_checkForNewVersion);
+
 var _getFiles = require('./get-files.js');
 
 var _getFiles2 = _interopRequireDefault(_getFiles);
@@ -43,47 +47,61 @@ var start = function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            env = _yargs.argv.env || 'dev';
-            location = _yargs.argv.location || 'remote';
+            _context.next = 2;
+            return (0, _checkForNewVersion2.default)({ packageJson: _package2.default });
 
-            if (!_package2.default.worona) {
+          case 2:
+            if (!_context.sent) {
               _context.next = 6;
               break;
             }
 
-            _context.t0 = _package2.default;
-            _context.next = 9;
+            console.log('Please run npm start again.');
+            _context.next = 27;
             break;
 
           case 6:
-            _context.next = 8;
+            env = _yargs.argv.env || 'dev';
+            location = _yargs.argv.location || 'remote';
+
+            if (!_package2.default.worona) {
+              _context.next = 12;
+              break;
+            }
+
+            _context.t0 = _package2.default;
+            _context.next = 15;
+            break;
+
+          case 12:
+            _context.next = 14;
             return (0, _askForInfo2.default)({ packageJson: _package2.default });
 
-          case 8:
+          case 14:
             _context.t0 = _context.sent;
 
-          case 9:
+          case 15:
             newPackageJson = _context.t0;
             worona = newPackageJson.worona;
 
             (0, _fs.writeFileSync)('package.json', JSON.stringify(newPackageJson, null, 2));
-            _context.next = 14;
+            _context.next = 20;
             return (0, _askForService2.default)({ services: worona.services });
 
-          case 14:
+          case 20:
             service = _context.sent;
-            _context.next = 17;
+            _context.next = 23;
             return (0, _installVendorPackages2.default)({ service: service, packageJson: newPackageJson });
 
-          case 17:
-            _context.next = 19;
+          case 23:
+            _context.next = 25;
             return (0, _getFiles2.default)({ service: service, env: env });
 
-          case 19:
-            _context.next = 21;
+          case 25:
+            _context.next = 27;
             return (0, _webpack2.default)(_extends({}, worona, { env: env, location: location }));
 
-          case 21:
+          case 27:
           case 'end':
             return _context.stop();
         }

@@ -14,28 +14,27 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 exports.default = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(_ref2) {
-    var service = _ref2.service,
-        packageJson = _ref2.packageJson;
+    var packageJson = _ref2.packageJson;
     var remoteVersion, localVersion;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return (0, _utils.getPackageVersion)('core-' + service + '-worona');
+            return (0, _utils.getPackageVersion)('worona-packages');
 
           case 2:
             remoteVersion = _context.sent;
-            localVersion = packageJson.devDependencies['core-' + service + '-worona'] || '0.0.0';
+            localVersion = packageJson.devDependencies['worona-packages'];
 
             if (!(0, _semver.gt)(remoteVersion, localVersion)) {
               _context.next = 9;
               break;
             }
 
-            console.log('Updating packages for ' + service + '...');
+            console.log('Updating worona-packages...');
             _context.next = 8;
-            return (0, _childProcessPromise.spawn)('npm', ['install', '--save-dev', '--save-exact', 'core-' + service + '-worona'], { stdio: 'inherit' });
+            return (0, _childProcessPromise.spawn)('npm', ['install', '--save-dev', '--save-exact', 'worona-packages'], { stdio: 'inherit' });
 
           case 8:
             console.log('Updating finished.\n');

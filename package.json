@@ -6,7 +6,8 @@
   "scripts": {
     "build": "babel src --out-dir dist",
     "debug:ask-for-info": "babel-node debug/ask-for-info.js",
-    "debug:install-vendor-packages": "babel-node debug/install-vendor-packages.js"
+    "debug:install-vendor-packages": "babel-node debug/install-vendor-packages.js",
+    "debug:check-for-new-version": "babel-node debug/check-for-new-version.js"
   },
   "repository": {
     "type": "git",
