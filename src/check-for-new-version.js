@@ -6,9 +6,11 @@ export default async ({ packageJson }) => {
   const remoteVersion = await getPackageVersion('worona-packages');
   const localVersion = packageJson.devDependencies['worona-packages'];
   if (gt(remoteVersion, localVersion)) {
-    console.log('Updating worona-packages...');
+    console.log('\nThere is a new version of worona-packages. Updating...');
     await spawn('npm', ['install', '--save-dev', '--save-exact', 'worona-packages'],
       { stdio: 'inherit' });
     console.log(`Updating finished.\n`);
+    return true;
   }
+  return false;
 };

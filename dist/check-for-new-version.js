@@ -28,18 +28,22 @@ exports.default = function () {
             localVersion = packageJson.devDependencies['worona-packages'];
 
             if (!(0, _semver.gt)(remoteVersion, localVersion)) {
-              _context.next = 9;
+              _context.next = 10;
               break;
             }
 
-            console.log('Updating worona-packages...');
+            console.log('\nThere is a new version of worona-packages. Updating...');
             _context.next = 8;
             return (0, _childProcessPromise.spawn)('npm', ['install', '--save-dev', '--save-exact', 'worona-packages'], { stdio: 'inherit' });
 
           case 8:
             console.log('Updating finished.\n');
+            return _context.abrupt('return', true);
 
-          case 9:
+          case 10:
+            return _context.abrupt('return', false);
+
+          case 11:
           case 'end':
             return _context.stop();
         }
