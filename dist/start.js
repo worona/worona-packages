@@ -20,6 +20,10 @@ var _askForService = require('./ask-for-service.js');
 
 var _askForService2 = _interopRequireDefault(_askForService);
 
+var _installVendorPackages = require('./install-vendor-packages.js');
+
+var _installVendorPackages2 = _interopRequireDefault(_installVendorPackages);
+
 var _getFiles = require('./get-files.js');
 
 var _getFiles2 = _interopRequireDefault(_getFiles);
@@ -69,13 +73,17 @@ var start = function () {
           case 14:
             service = _context.sent;
             _context.next = 17;
-            return (0, _getFiles2.default)({ service: service, env: env });
+            return (0, _installVendorPackages2.default)({ service: service, packageJson: newPackageJson });
 
           case 17:
             _context.next = 19;
-            return (0, _webpack2.default)(_extends({}, worona, { env: env, location: location }));
+            return (0, _getFiles2.default)({ service: service, env: env });
 
           case 19:
+            _context.next = 21;
+            return (0, _webpack2.default)(_extends({}, worona, { env: env, location: location }));
+
+          case 21:
           case 'end':
             return _context.stop();
         }

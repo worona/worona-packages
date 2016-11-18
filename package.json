@@ -5,7 +5,8 @@
   "main": "dist/start.js",
   "scripts": {
     "build": "babel src --out-dir dist",
-    "debug:ask-for-info": "babel-node debug/ask-for-info.js"
+    "debug:ask-for-info": "babel-node debug/ask-for-info.js",
+    "debug:install-vendor-packages": "babel-node debug/install-vendor-packages.js"
   },
   "repository": {
     "type": "git",
@@ -48,19 +49,9 @@
     "url-regexp": "^1.0.2",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2",
-    "worona-deps": "^1.8.3",
-    "yargs": "^6.3.0",
-    "classnames": "^2.2.5",
-    "normalizr": "^2.2.1",
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2",
-    "react-i18next": "^1.10.1",
-    "react-redux": "^4.4.5",
-    "react-router": "^2.8.1",
-    "redux": "^3.6.0",
-    "redux-router": "^2.1.2",
-    "redux-saga": "^0.12.0",
-    "reselect": "^2.5.4",
-    "stringify-error-message": "^1.0.2"
+    "yargs": "^6.3.0"
+  },
+  "devDependencies": {
+    "core-dashboard-worona": "1.2.25"
   }
 }
