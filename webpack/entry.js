@@ -1,5 +1,5 @@
 require('babel-polyfill');
-var pkg = require('../../../src/dashboard').default;
+var pkg = require('../../../src/dashboard');
 var pkgJson = require('../../../package.json');
 var packageDevelopment = require('worona-deps').packageDevelopment;
 
