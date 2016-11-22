@@ -45,20 +45,20 @@ export default async ({ packageJson }) => {
       'Incorrect format. Keywords should be made only of letters and numbers'; },
   }, {
     type: 'input',
-    name: 'authors',
-    message: 'Author emails (comma seperated list):',
-    filter: getArrayFromList,
-    validate(emails) {
-      return (emails.length > 0 && validateArray(emails, /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/))
-        || 'Emails not valid';
-    },
-  }, {
-    type: 'input',
     name: 'license',
     message: 'License:',
     default() { return 'MIT'; },
   }]);
   const worona = await inquirer.prompt([{
+    type: 'input',
+    name: 'authors',
+    message: 'Author emails (comma seperated list):',
+    filter(keywords) { return getArrayFromList(keywords); },
+    validate(emails) {
+      return (emails.length > 0 && validateArray(emails, /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/))
+        || 'Emails not valid';
+    },
+  }, {
     type: 'input',
     name: 'niceName',
     message: 'Nice name (like My Package Name):',
@@ -109,12 +109,12 @@ export default async ({ packageJson }) => {
     }]);
     worona.menu = { category, order };
   }
+  npmValues.author = worona.authors.join(', ');
   worona.default = false;
   worona.core = false;
   worona.listed = true;
   worona.deactivable = true;
   worona.public = true;
-  worona.authors = [npmValues.author];
 
   if (npmValues.repository !== '') {
     npmValues.bugs = { url: `${npmValues.repository}/issues` };
