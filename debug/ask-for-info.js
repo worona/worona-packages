@@ -2,6 +2,7 @@ import askForInfo from '../src/ask-for-info.js';
 
 const start = async () => {
   const newPackageJson = await askForInfo({ packageJson: {} });
+  console.log(newPackageJson.worona.menu);
   console.log(newPackageJson);
 };
 

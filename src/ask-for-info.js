@@ -76,8 +76,8 @@ export default async ({ packageJson }) => {
   }, {
     type: 'checkbox',
     name: 'services',
-    choices: ['dashboard', 'app'],
-    message: 'Service:',
+    choices: ['dashboard', 'app', 'fbia', 'amp'],
+    message: 'Services where the package will be loaded:',
     default() { return ['dashboard']; },
     validate(services) { return services.length > 0 || 'Select at least one service.'; },
   }]);
@@ -92,7 +92,14 @@ export default async ({ packageJson }) => {
     worona.namespace = namespace;
   }
   if (worona.services.indexOf('dashboard') !== -1) {
-    const { category, order } = await inquirer.prompt([{
+    worona.menu = await inquirer.prompt([{
+      type: 'checkbox',
+      name: 'services',
+      choices: ['app', 'fbia', 'amp'],
+      message: 'Tabs where a menu entrie will appear:',
+      default() { return ['app']; },
+      validate(services) { return services.length > 0 || 'Select at least one service.'; },
+    }, {
       type: 'list',
       name: 'category',
       choices: ['General', 'Themes', 'Extensions', 'Publish'],
@@ -107,7 +114,6 @@ export default async ({ packageJson }) => {
         const number = parseInt(order);
         return (!isNaN(number) && number >= 1 && number <= 100) || 'Please enter a number between 1 and 100.' },
     }]);
-    worona.menu = { category, order };
   }
   npmValues.author = worona.authors.join(', ');
   worona.default = false;
