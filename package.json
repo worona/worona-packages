@@ -47,6 +47,7 @@
     "raw-loader": "^0.5.1",
     "sass-loader": "^4.0.2",
     "semver": "^5.3.0",
+    "style-loader": "^0.13.1",
     "superagent": "^2.3.0",
     "url-loader": "^0.5.7",
     "url-regexp": "^1.0.2",
