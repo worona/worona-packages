@@ -5,7 +5,7 @@ export default async (config) => {
     '--config', 'node_modules/worona-packages/webpack/webpack.config.js',
     '--progress',
     '--name', 'core-dashboard-worona',
-    '--entrie', 'dashboard',
+    '--service', config.service,
     '--env', config.env,
     '--location', config.location,
   ], { stdio: 'inherit' });

@@ -40,7 +40,7 @@ exports.default = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(_ref2) {
     var packageJson = _ref2.packageJson;
 
-    var npmValues, worona, _ref3, namespace, _ref4, category, order, repo;
+    var npmValues, worona, _ref3, namespace, repo;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -95,14 +95,6 @@ exports.default = function () {
               }
             }, {
               type: 'input',
-              name: 'authors',
-              message: 'Author emails (comma seperated list):',
-              filter: getArrayFromList,
-              validate: function validate(emails) {
-                return emails.length > 0 && validateArray(emails, /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/) || 'Emails not valid';
-              }
-            }, {
-              type: 'input',
               name: 'license',
               message: 'License:',
               default: function _default() {
@@ -114,6 +106,16 @@ exports.default = function () {
             npmValues = _context.sent;
             _context.next = 6;
             return _inquirer2.default.prompt([{
+              type: 'input',
+              name: 'authors',
+              message: 'Author emails (comma seperated list):',
+              filter: function filter(keywords) {
+                return getArrayFromList(keywords);
+              },
+              validate: function validate(emails) {
+                return emails.length > 0 && validateArray(emails, /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/) || 'Emails not valid';
+              }
+            }, {
               type: 'input',
               name: 'niceName',
               message: 'Nice name (like My Package Name):',
@@ -137,8 +139,8 @@ exports.default = function () {
             }, {
               type: 'checkbox',
               name: 'services',
-              choices: ['dashboard', 'app'],
-              message: 'Service:',
+              choices: ['dashboard', 'app', 'fbia', 'amp'],
+              message: 'Services where the package will be loaded:',
               default: function _default() {
                 return ['dashboard'];
               },
@@ -176,12 +178,23 @@ exports.default = function () {
 
           case 14:
             if (!(worona.services.indexOf('dashboard') !== -1)) {
-              _context.next = 21;
+              _context.next = 18;
               break;
             }
 
             _context.next = 17;
             return _inquirer2.default.prompt([{
+              type: 'checkbox',
+              name: 'services',
+              choices: ['app', 'fbia', 'amp'],
+              message: 'Tabs where a menu entrie will appear:',
+              default: function _default() {
+                return ['app'];
+              },
+              validate: function validate(services) {
+                return services.length > 0 || 'Select at least one service.';
+              }
+            }, {
               type: 'list',
               name: 'category',
               choices: ['General', 'Themes', 'Extensions', 'Publish'],
@@ -201,19 +214,15 @@ exports.default = function () {
             }]);
 
           case 17:
-            _ref4 = _context.sent;
-            category = _ref4.category;
-            order = _ref4.order;
+            worona.menu = _context.sent;
 
-            worona.menu = { category: category, order: order };
-
-          case 21:
+          case 18:
+            npmValues.author = worona.authors.join(', ');
             worona.default = false;
             worona.core = false;
             worona.listed = true;
             worona.deactivable = true;
             worona.public = true;
-            worona.authors = [npmValues.author];
 
             if (npmValues.repository !== '') {
               npmValues.bugs = { url: npmValues.repository + '/issues' };
@@ -226,7 +235,7 @@ exports.default = function () {
             console.log('\n');
             return _context.abrupt('return', _extends({}, packageJson, npmValues, { worona: worona }));
 
-          case 30:
+          case 27:
           case 'end':
             return _context.stop();
         }

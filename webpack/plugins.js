@@ -5,7 +5,10 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 var definePlugin = function(config) {
   var nodeEnv = config.env === 'dev' ? 'development' : 'production';
-  return new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify(nodeEnv) } });
+  return new webpack.DefinePlugin({ 'process.env': {
+    NODE_ENV: JSON.stringify(nodeEnv),
+    SERVICE_ENV: JSON.stringify(config.service),
+  } });
 };
 
 var lodashModuleReplacementPlugin = function() {
@@ -20,7 +23,7 @@ var lodashModuleReplacementPlugin = function() {
 var dllReferencePlugin = function(config) {
   return new webpack.DllReferencePlugin({
     context: path.resolve('.'),
-    manifest: require('.worona/' + config.entrie + '/' + config.env + '/vendors-manifest.json'),
+    manifest: require('.worona/' + config.service + '/' + config.env + '/vendors-manifest.json'),
   });
 };
 
@@ -29,10 +32,10 @@ var contextReplacementPlugin = function() {
 }
 
 var htmlWebpackPlugin = function(config) {
-  var files = require('.worona/' + config.entrie + '/' + config.env + '/core-files.json');
+  var files = require('.worona/' + config.service + '/' + config.env + '/core-files.json');
   return new HtmlWebpackPlugin({
     inject: false,
-    title: 'Worona ' + config.entrie + ' (PKG DEV)',
+    title: 'Worona ' + config.service + ' (PKG DEV)',
     template: path.resolve('node_modules', 'worona-packages', 'webpack', 'html', 'index.html'),
     favicon: path.resolve('node_modules', 'worona-packages', 'webpack', 'html', 'favicon.png'),
     vendorsFile: files.vendors,

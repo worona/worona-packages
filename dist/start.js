@@ -56,7 +56,7 @@ var start = function () {
               break;
             }
 
-            console.log('Please run `npm start` again.\n');
+            console.log('Please run `npm start` again.\n\n');
             _context.next = 27;
             break;
 
@@ -99,7 +99,7 @@ var start = function () {
 
           case 25:
             _context.next = 27;
-            return (0, _webpack2.default)(_extends({}, worona, { env: env, location: location }));
+            return (0, _webpack2.default)(_extends({}, worona, { env: env, location: location, service: service }));
 
           case 27:
           case 'end':
