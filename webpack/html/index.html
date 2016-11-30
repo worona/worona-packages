@@ -17,7 +17,9 @@
 <% } %>
 <div id="root"></div>
 <script src="<%= htmlWebpackPlugin.options.vendorsFile %>"></script>
-<script src="/bundle.js"></script>
+<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+  <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+<% } %>
 <script src="<%= htmlWebpackPlugin.options.coreFile %>"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+/* eslint-disable */
 var path = require('path');
 var config = require('yargs').argv;
 var plugins = require('./plugins');
@@ -27,8 +28,9 @@ module.exports = {
   ] },
   output: {
     path: path.resolve('dist'),
-    filename: 'bundle.js',
-    publicPath: '/',
+    filename: config.name + '.js',
+    publicPath: 'http://localhost:3333',
+    chunkFilename: '[name].js',
   },
   module: { loaders: loadersArr },
   resolve: {
