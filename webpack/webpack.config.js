@@ -31,6 +31,7 @@ module.exports = {
     filename: config.name + '.js',
     publicPath: 'http://localhost:3333',
     chunkFilename: '[name].js',
+    jsonpFunction: 'webpackJsonp_' + config.name.replace(/-/g, '_'),
   },
   module: { loaders: loadersArr },
   resolve: {
