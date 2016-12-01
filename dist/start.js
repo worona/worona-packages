@@ -99,7 +99,7 @@ var start = function () {
 
           case 25:
             _context.next = 27;
-            return (0, _webpack2.default)(_extends({}, worona, { env: env, location: location, service: service }));
+            return (0, _webpack2.default)(_extends({}, newPackageJson, worona, { env: env, location: location, service: service }));
 
           case 27:
           case 'end':

@@ -21,7 +21,7 @@ const start = async () => {
     const service = await askForService({ services: worona.services });
     await installVendorPackages({ service, packageJson: newPackageJson });
     await getFiles({ service, env });
-    await webpack({ ...worona, env, location, service });
+    await webpack({ ...newPackageJson, ...worona, env, location, service });
   }
 };
 
