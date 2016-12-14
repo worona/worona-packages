@@ -1,7 +1,9 @@
+/* eslint-disable */
 var webpack = require('webpack');
 var path = require('path');
 var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var definePlugin = function(config) {
   var nodeEnv = config.env === 'dev' ? 'development' : 'production';
@@ -29,7 +31,12 @@ var dllReferencePlugin = function(config) {
 
 var contextReplacementPlugin = function() {
   new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|es/);
-}
+};
+
+var extractTextPlugin = function(config) {
+  if (config.env === 'prod')
+    return new ExtractTextPlugin('css/' + config.name + '.[contenthash].css');
+};
 
 var htmlWebpackPlugin = function(config) {
   var files = require('.worona/' + config.service + '/' + config.env + '/core-files.json');
@@ -55,5 +62,6 @@ module.exports = {
   lodashModuleReplacementPlugin: lodashModuleReplacementPlugin,
   dllReferencePlugin: dllReferencePlugin,
   htmlWebpackPlugin: htmlWebpackPlugin,
+  extractTextPlugin: extractTextPlugin,
   contextReplacementPlugin: contextReplacementPlugin,
 };

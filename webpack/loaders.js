@@ -1,4 +1,6 @@
 /* eslint-disable */
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 var babel = function(config) {
   return {
     test: /\.jsx?$/,
@@ -12,14 +14,45 @@ var babel = function(config) {
 };
 
 var css = function(config) {
-  return {
-    test: /\.css$/,
-    loaders: [
-      'style-loader',
-      'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
-      'postcss-loader',
-    ],
-  };
+  if (config.env === 'dev') {
+    return {
+      test: /\.css$/,
+      loaders: [
+        'style-loader',
+        'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+        'postcss-loader',
+      ],
+    };
+  } else {
+    return {
+      test: /\.css$/,
+      loader: ExtractTextPlugin.extract('style-loader', [
+        'css-loader?modules',
+        'postcss-loader',
+      ]),
+    };
+  }
+};
+
+var sass = function(config) {
+  if (config.env === 'dev' || config.type === 'core') {
+    return {
+      test: /\.s[ac]ss$/,
+      loaders: [
+        'style-loader',
+        'css-loader',
+        'sass-loader',
+      ],
+    };
+  } else {
+    return {
+      test: /\.s[ac]ss$/,
+      loader: ExtractTextPlugin.extract('style-loader', [
+        'css-loader',
+        'sass-loader',
+      ]),
+    };
+  }
 };
 
 var sass = function(config) {

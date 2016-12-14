@@ -9,6 +9,7 @@ var pluginsArr = [
   plugins.dllReferencePlugin(config),
   plugins.lodashModuleReplacementPlugin(config),
   plugins.contextReplacementPlugin(),
+  plugins.extractTextPlugin(config),
   plugins.htmlWebpackPlugin(config),
 ].filter(function(plugin) { return typeof plugin !== 'undefined'; });
 
@@ -30,7 +31,7 @@ module.exports = {
     path: path.resolve('dist'),
     filename: config.name + '.js',
     publicPath: 'http://localhost:3333',
-    chunkFilename: '[name].js',
+    chunkFilename: '[name].[chunkhash].js',
     jsonpFunction: 'webpackJsonp_' + config.name.replace(/-/g, '_'),
   },
   module: { loaders: loadersArr },
