@@ -90,6 +90,14 @@ export default async ({ packageJson }) => {
       validate(name) { return /^[a-zA-Z0-9]+$/.test(name) || 'Incorrect format. Namespace should be in camelcase.'; },
     }]);
     worona.namespace = namespace;
+  } else if(worona.type === 'theme' && worona.services.indexOf('app') !== -1 ) {
+    const { namespace } = await inquirer.prompt([{
+      type: 'input',
+      name: 'namespace',
+      message: 'Namespace for the dashboard:',
+      validate(name) { return (/^[a-zA-Z0-9]+$/.test(name) && !/^theme$/.test(name)) || 'Incorrect format. Namespace should be in camelcase and different from theme.'; },
+    }]);
+    worona.namespace = { app: 'theme', dashboard: namespace };
   }
   if (worona.services.indexOf('dashboard') !== -1) {
     worona.menu = await inquirer.prompt([{
