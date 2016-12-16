@@ -1,6 +1,6 @@
 {
   "name": "worona-packages",
-  "version": "1.2.22",
+  "version": "1.2.23",
   "description": "NPM package with webpack for the development of worona packages",
   "main": "dist/start.js",
   "scripts": {
