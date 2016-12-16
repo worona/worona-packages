@@ -18,6 +18,7 @@ const start = async () => {
     const newPackageJson = packageJson.worona ? packageJson : await askForInfo({ packageJson });
     const worona = newPackageJson.worona;
     writeFileSync('package.json', JSON.stringify(newPackageJson, null, 2));
+    await spawn('npm', ['install'], { stdio: 'inherit' });
     const service = await askForService({ services: worona.services });
     await installVendorPackages({ service, packageJson: newPackageJson });
     await getFiles({ service, env });
