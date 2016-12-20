@@ -1,5 +1,6 @@
 import inquirer from 'inquirer';
 import semver from 'semver';
+import colors from 'colors';
 import { validate as urlValidate } from 'url-regexp';
 
 const getArrayFromList = list =>
@@ -12,24 +13,26 @@ const getArrayFromList = list =>
 const validateArray = (arr, rgx, msg) =>
   arr.reduce((prev, item) => rgx.test(item) && prev, true ) || msg;
 
+const log = msg => console.log(colors.yellow.bold.underline(msg));
+
 export default async ({ packageJson }) => {
-  console.log('\n');
-  const npmValues = await inquirer.prompt([{
+  log('\nFirst, let\'s add some general info about the package for Npm:\n');
+  const npm = await inquirer.prompt([{
     type: 'input',
     name: 'name',
-    message: 'Name (like my-package-name):',
+    message: 'Npm name (like my-package-name):',
     validate(name) { return /^[a-z0-9-]+$/.test(name) || 'Incorrect format. It should be something like my-package-name.'; },
+  }, {
+    type: 'input',
+    name: 'description',
+    message: 'Npm description:',
+    validate(name) { return (name !== '') || 'Please add a description.'; },
   }, {
     type: 'input',
     name: 'version',
     message: 'Version:',
     default() { return '1.0.0'; },
     validate(version) { return !!semver.valid(version) || 'Incorrect version format.'; },
-  }, {
-    type: 'input',
-    name: 'description',
-    message: 'Description:',
-    validate(name) { return (name !== '') || 'Please add a description.'; },
   }, {
     type: 'input',
     name: 'repository',
@@ -48,8 +51,7 @@ export default async ({ packageJson }) => {
     name: 'license',
     message: 'License:',
     default() { return 'MIT'; },
-  }]);
-  const worona = await inquirer.prompt([{
+  }, {
     type: 'input',
     name: 'authors',
     message: 'Author emails (comma seperated list):',
@@ -58,71 +60,89 @@ export default async ({ packageJson }) => {
       return (emails.length > 0 && validateArray(emails, /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/))
         || 'Emails not valid';
     },
-  }, {
-    type: 'input',
-    name: 'niceName',
-    message: 'Nice name (like My Package Name):',
-    validate(name) { return /^[\w\s]+$/.test(name) || 'Incorrect format. Use only letters or spaces.'; },
-  }, {
-    type: 'input',
-    name: 'slug',
-    message: 'Slug (like MyPackageName):',
-    validate(name) { return /^[a-zA-Z0-9]+$/.test(name) || 'Incorrect format. Slug should be in camelcase.'; },
-  }, {
-    type: 'list',
-    name: 'type',
-    choices: ['extension', 'theme'],
-    message: 'Type:',
-  }, {
+  }]);
+  log('\nNow let\'s add some info for Worona:\n');
+  const { services } = await inquirer.prompt([{
     type: 'checkbox',
     name: 'services',
     choices: ['dashboard', 'app', 'fbia', 'amp'],
-    message: 'Services where the package will be loaded:',
+    message: 'Choose all the places where the package needs to run. Include dashboard if it needs a config page:\n',
     default() { return ['dashboard']; },
     validate(services) { return services.length > 0 || 'Select at least one service.'; },
   }]);
-  worona.namespace = 'theme';
-  if (worona.type !== 'theme') {
-    const { namespace } = await inquirer.prompt([{
-      type: 'input',
-      name: 'namespace',
-      message: 'Namespace:',
-      validate(name) { return /^[a-zA-Z0-9]+$/.test(name) || 'Incorrect format. Namespace should be in camelcase.'; },
-    }]);
-    worona.namespace = namespace;
-  } else if(worona.type === 'theme' && worona.services.indexOf('app') !== -1 ) {
-    const { namespace } = await inquirer.prompt([{
-      type: 'input',
-      name: 'namespace',
-      message: 'Namespace for the dashboard:',
-      validate(name) { return (/^[a-zA-Z0-9]+$/.test(name) && !/^theme$/.test(name)) || 'Incorrect format. Namespace should be in camelcase and different from theme.'; },
-    }]);
-    worona.namespace = { app: 'theme', dashboard: namespace };
-  }
-  if (worona.services.indexOf('dashboard') !== -1) {
-    worona.menu = await inquirer.prompt([{
-      type: 'checkbox',
-      name: 'services',
-      choices: ['app', 'fbia', 'amp'],
-      message: 'Tabs where a menu entrie will appear:',
-      default() { return ['app']; },
-      validate(services) { return services.length > 0 || 'Select at least one service.'; },
-    }, {
+
+  const worona = {};
+
+  for (const service of services) {
+    log(`\nNow let\'s add some info for the '${service}' service:\n`);
+    const { type } = await inquirer.prompt([{
       type: 'list',
-      name: 'category',
-      choices: ['General', 'Themes', 'Extensions', 'Publish'],
-      message: 'Dashboard menu category:',
+      name: 'type',
+      choices: ['extension', 'theme'],
+      message: `Type of this package when it's loaded on the '${service}':`,
+    }]);
+    const { namespace } = (type !== 'theme') ? await inquirer.prompt([{
+        type: 'input',
+        name: 'namespace',
+        message: `Namespace for this package on the '${service}':`,
+        validate(name) { return /^[a-zA-Z0-9]+$/.test(name) || 'Incorrect format. Namespace should be in camelcase.'; },
+      }]) : { namespace: 'theme' };
+    const otherOptions = await inquirer.prompt([{
+      type: 'input',
+      name: 'niceName',
+      message: 'The name for this package in the Worona repository (like My Package Name):',
+      validate(name) { return /^[\w\s]+$/.test(name) || 'Incorrect format. Use only letters or spaces.'; },
     }, {
       type: 'input',
-      name: 'order',
-      message: 'Dashboard menu order:',
-      default: 10,
-      filter(number) { return parseInt(number); },
-      validate(order) {
-        const number = parseInt(order);
-        return (!isNaN(number) && number >= 1 && number <= 100) || 'Please enter a number between 1 and 100.' },
+      name: 'description',
+      message: 'The description for this package in the Worona repository:',
+      validate(name) { return (name !== '') || 'Please add a description.'; },
+    }, {
+      type: 'confirm',
+      name: 'default',
+      message: `Should this package be loaded by default on ${service}?:`,
+      default: false,
     }]);
+    worona[service] = { type, namespace, ...otherOptions };
+    if (service === 'dashboard') {
+      const menu = {};
+      const { tabs } = await inquirer.prompt([{
+        type: 'checkbox',
+        name: 'tabs',
+        choices: ['app', 'fbia', 'amp'],
+        message: 'Services where a menu entrie should appear:',
+        default() { return ['app']; },
+        validate(tabs) { return tabs.length > 0 || 'Select at least one service.'; },
+      }]);
+      for (const tab of tabs) {
+        console.log();
+        const entrie = await inquirer.prompt([{
+          type: 'input',
+          name: 'name',
+          message: `Name for the menu entrie on the '${tab}' tab:`,
+          validate(name) { return (name !== '') || 'Please add a name.'; },
+        }, {
+          type: 'list',
+          name: 'category',
+          choices: ['General', 'Themes', 'Extensions', 'Publish'],
+          message: `Category for the menu entrie on the '${tab}' tab:`,
+        }, {
+          type: 'input',
+          name: 'order',
+          message: `Order for the menu entrie on the '${tab}' tab (between 1 and 100):`,
+          default: 10,
+          filter(number) { return parseInt(number); },
+          validate(order) {
+            const number = parseInt(order);
+            return (!isNaN(number) && number >= 1 && number <= 100) || 'Please enter a number between 1 and 100.' },
+        }]);
+        menu[tab] = entrie;
+        worona[service].menu = menu;
+      }
+    }
   }
+
+  console.log(worona);
   npmValues.author = worona.authors.join(', ');
   worona.default = false;
   worona.core = false;
