@@ -17,11 +17,13 @@ const log = msg => console.log(colors.yellow.bold.underline(msg));
 
 export default async ({ packageJson }) => {
   log('\nFirst, let\'s add some general info about the package for Npm:\n');
+
   const npm = await inquirer.prompt([{
     type: 'input',
     name: 'name',
-    message: 'Npm name (like my-package-name):',
-    validate(name) { return /^[a-z0-9-]+$/.test(name) || 'Incorrect format. It should be something like my-package-name.'; },
+    message: 'Npm name (like package-name-app-extesion-worona):',
+    filter(name) { return name.toLowerCase(); },
+    validate(name) { return /^[a-z0-9-]+-worona$/.test(name) || 'Incorrect format. It should be something like package-name-app-extesion-worona.'; },
   }, {
     type: 'input',
     name: 'description',
@@ -38,7 +40,7 @@ export default async ({ packageJson }) => {
     name: 'repository',
     message: 'Git repository (like https://github.com/user/repo):',
     filter(repo) { return repo.replace(/\.git$/, ''); },
-    validate(url) { return (url === '' || urlValidate(url)) || 'Incorrect format. Enter a url or nothing at all.'; }
+    validate(url) { return (url === '' || urlValidate(url)) || 'Incorrect format. Enter a url or nothing at all.'; },
   }, {
     type: 'input',
     name: 'keywords',
@@ -51,7 +53,11 @@ export default async ({ packageJson }) => {
     name: 'license',
     message: 'License:',
     default() { return 'MIT'; },
-  }, {
+  }]);
+
+  log('\nNow let\'s add some info for Worona:\n');
+
+  const { services, ...worona } = await inquirer.prompt([{
     type: 'input',
     name: 'authors',
     message: 'Author emails (comma seperated list):',
@@ -60,9 +66,12 @@ export default async ({ packageJson }) => {
       return (emails.length > 0 && validateArray(emails, /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/))
         || 'Emails not valid';
     },
-  }]);
-  log('\nNow let\'s add some info for Worona:\n');
-  const { services } = await inquirer.prompt([{
+  }, {
+    type: 'confirm',
+    name: 'private',
+    message: `Is this package private?:`,
+    default: false,
+  }, {
     type: 'checkbox',
     name: 'services',
     choices: ['dashboard', 'app', 'fbia', 'amp'],
@@ -71,50 +80,72 @@ export default async ({ packageJson }) => {
     validate(services) { return services.length > 0 || 'Select at least one service.'; },
   }]);
 
-  const worona = {};
-
   for (const service of services) {
     log(`\nNow let\'s add some info for the '${service}' service:\n`);
+
     const { type } = await inquirer.prompt([{
       type: 'list',
       name: 'type',
       choices: ['extension', 'theme'],
       message: `Type of this package when it's loaded on the '${service}':`,
     }]);
+
     const { namespace } = (type !== 'theme') ? await inquirer.prompt([{
         type: 'input',
         name: 'namespace',
         message: `Namespace for this package on the '${service}':`,
-        validate(name) { return /^[a-zA-Z0-9]+$/.test(name) || 'Incorrect format. Namespace should be in camelcase.'; },
+        filter(namespace) { return namespace.charAt(0).toLowerCase() + namespace.slice(1); },
+        validate(namespace) { return /^[a-zA-Z0-9]+$/.test(namespace) || 'Incorrect format. Namespace should be in camelcase.'; },
       }]) : { namespace: 'theme' };
-    const otherOptions = await inquirer.prompt([{
+
+    const repositoryQuestions = [{
       type: 'input',
-      name: 'niceName',
-      message: 'The name for this package in the Worona repository (like My Package Name):',
+      name: 'name',
+      message: `The name of this package for the repository of '${service}' packages:`,
       validate(name) { return /^[\w\s]+$/.test(name) || 'Incorrect format. Use only letters or spaces.'; },
     }, {
       type: 'input',
       name: 'description',
-      message: 'The description for this package in the Worona repository:',
-      validate(name) { return (name !== '') || 'Please add a description.'; },
+      message: `The description of this package for the repository of '${service}' packages:`,
+      validate(description) { return (description !== '') || 'Please add a description.'; },
+    }, {
+      type: 'input',
+      name: 'image',
+      message: `The url of the image of this package for the repository of '${service}' packages:`,
+      validate(url) { return (url === '' || urlValidate(url)) || 'Incorrect format. Enter a url or nothing at all.'; },
     }, {
       type: 'confirm',
-      name: 'default',
-      message: `Should this package be loaded by default on ${service}?:`,
-      default: false,
-    }]);
-    worona[service] = { type, namespace, ...otherOptions };
-    if (service === 'dashboard') {
-      const menu = {};
-      const { tabs } = await inquirer.prompt([{
+      name: 'public',
+      message: `Should this package be listed publicly on the '${service}' repository?:`,
+      default: true,
+    }];
+
+    const dashboardQuestions = [{
         type: 'checkbox',
         name: 'tabs',
         choices: ['app', 'fbia', 'amp'],
         message: 'Services where a menu entrie should appear:',
         default() { return ['app']; },
         validate(tabs) { return tabs.length > 0 || 'Select at least one service.'; },
-      }]);
-      for (const tab of tabs) {
+    }];
+
+    const questions = [{
+      type: 'confirm',
+      name: 'default',
+      message: `Should this package be loaded by default on '${service}'?:`,
+      default: false,
+    }];
+
+    if (service !== 'dashboard') questions.push(...repositoryQuestions);
+    if (service === 'dashboard') questions.push(...dashboardQuestions);
+
+    const answers = await inquirer.prompt(questions);
+
+    worona[service] = { type, namespace, ...answers };
+
+    if (worona[service].tabs) {
+      const menu = {};
+      for (const tab of worona[service].tabs) {
         console.log();
         const entrie = await inquirer.prompt([{
           type: 'input',
@@ -138,25 +169,20 @@ export default async ({ packageJson }) => {
         }]);
         menu[tab] = entrie;
         worona[service].menu = menu;
+        delete worona[service].tabs;
       }
     }
   }
 
-  console.log(worona);
-  npmValues.author = worona.authors.join(', ');
-  worona.default = false;
-  worona.core = false;
-  worona.listed = true;
-  worona.deactivable = true;
-  worona.public = true;
+  npm.author = worona.authors.join(', ');
 
-  if (npmValues.repository !== '') {
-    npmValues.bugs = { url: `${npmValues.repository}/issues` };
-    npmValues.homepage = `${npmValues.repository}#readme`;
-    const repo = /\.git$/.test(npmValues.repository) ? npmValues.repository : `${npmValues.repository}.git`;
-    npmValues.repository = { type: 'git', url: `git+${repo}` };
+  if (npm.repository !== '') {
+    npm.bugs = { url: `${npm.repository}/issues` };
+    npm.homepage = `${npm.repository}#readme`;
+    const repo = /\.git$/.test(npm.repository) ? npm.repository : `${npm.repository}.git`;
+    npm.repository = { type: 'git', url: `git+${repo}` };
   }
 
   console.log('\n');
-  return { ...packageJson, ...npmValues, worona };
+  return { ...packageJson, ...npm, worona };
 };
