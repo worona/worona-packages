@@ -57,7 +57,7 @@ var start = function () {
             }
 
             console.log('Please run `npm start` again.\n\n');
-            _context.next = 27;
+            _context.next = 29;
             break;
 
           case 6:
@@ -86,22 +86,26 @@ var start = function () {
 
             (0, _fs.writeFileSync)('package.json', JSON.stringify(newPackageJson, null, 2));
             _context.next = 20;
-            return (0, _askForService2.default)({ services: worona.services });
+            return spawn('npm', ['install'], { stdio: 'inherit' });
 
           case 20:
-            service = _context.sent;
-            _context.next = 23;
-            return (0, _installVendorPackages2.default)({ service: service, packageJson: newPackageJson });
+            _context.next = 22;
+            return (0, _askForService2.default)({ services: worona.services });
 
-          case 23:
+          case 22:
+            service = _context.sent;
             _context.next = 25;
-            return (0, _getFiles2.default)({ service: service, env: env });
+            return (0, _installVendorPackages2.default)({ service: service, packageJson: newPackageJson });
 
           case 25:
             _context.next = 27;
-            return (0, _webpack2.default)(_extends({}, newPackageJson, worona, { env: env, location: location, service: service }));
+            return (0, _getFiles2.default)({ service: service, env: env });
 
           case 27:
+            _context.next = 29;
+            return (0, _webpack2.default)(_extends({}, newPackageJson, worona, { env: env, location: location, service: service }));
+
+          case 29:
           case 'end':
             return _context.stop();
         }
