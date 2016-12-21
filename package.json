@@ -4,7 +4,6 @@
   "description": "NPM package with webpack for the development of worona packages",
   "main": "dist/start.js",
   "scripts": {
-    "prepublish": "npm run build && npm version patch",
     "build": "babel src --out-dir dist",
     "debug:ask-for-info": "babel-node debug/ask-for-info.js",
     "debug:install-vendor-packages": "babel-node debug/install-vendor-packages.js",
