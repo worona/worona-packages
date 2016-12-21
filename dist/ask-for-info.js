@@ -237,8 +237,8 @@ exports.default = function () {
               }
             }, {
               type: 'confirm',
-              name: 'public',
-              message: 'Should this package be listed publicly on the \'' + service + '\' repository?:',
+              name: 'listed',
+              message: 'Should this package be listed on the \'' + service + '\' repository?:',
               default: true
             }];
             dashboardQuestions = [{

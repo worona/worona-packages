@@ -115,8 +115,8 @@ export default async ({ packageJson }) => {
       validate(url) { return (url === '' || urlValidate(url)) || 'Incorrect format. Enter a url or nothing at all.'; },
     }, {
       type: 'confirm',
-      name: 'public',
-      message: `Should this package be listed publicly on the '${service}' repository?:`,
+      name: 'listed',
+      message: `Should this package be listed on the '${service}' repository?:`,
       default: true,
     }];
 
