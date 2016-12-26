@@ -22,20 +22,20 @@ exports.default = function () {
         switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return (0, _utils.getPackageVersion)('core-' + service + '-worona');
+            return (0, _utils.getPackageVersion)('vendors-' + service + '-worona');
 
           case 2:
             remoteVersion = _context.sent;
-            localVersion = packageJson.devDependencies['core-' + service + '-worona'] || '0.0.0';
+            localVersion = packageJson.devDependencies['vendors-' + service + '-worona'] || '0.0.0';
 
             if (!(0, _semver.gt)(remoteVersion, localVersion)) {
               _context.next = 9;
               break;
             }
 
-            console.log('\nThere is a new version of core-' + service + '-worona. Updating...');
+            console.log('\nThere is a new version of vendors-' + service + '-worona. Updating...');
             _context.next = 8;
-            return (0, _childProcessPromise.spawn)('npm', ['install', '--save-dev', '--save-exact', 'core-' + service + '-worona@' + remoteVersion], { stdio: 'inherit' });
+            return (0, _childProcessPromise.spawn)('npm', ['install', '--save-dev', '--save-exact', 'vendors-' + service + '-worona@' + remoteVersion], { stdio: 'inherit' });
 
           case 8:
             console.log('Updating finished.\n');
