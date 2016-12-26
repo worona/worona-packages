@@ -97,7 +97,7 @@ var start = function () {
 
                       (0, _fs.writeFileSync)('package.json', JSON.stringify(newPackageJson, null, 2));
                       _context.next = 15;
-                      return (0, _childProcessPromise.spawn)('npm', ['update'], { stdio: 'inherit' });
+                      return (0, _childProcessPromise.spawn)('npm', ['install'], { stdio: 'inherit' });
 
                     case 15:
                       _context.next = 17;

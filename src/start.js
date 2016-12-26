@@ -21,7 +21,7 @@ const start = async () => {
     const worona = newPackageJson.worona;
     const services = ['dashboard', 'app', 'amp', 'fbia'].filter(service => worona[service]);
     writeFileSync('package.json', JSON.stringify(newPackageJson, null, 2));
-    await spawn('npm', ['update'], { stdio: 'inherit' });
+    await spawn('npm', ['install'], { stdio: 'inherit' });
     const service = await askForService({ services });
     await installVendorPackages({ service, packageJson: newPackageJson });
     await getFiles({ service, env });
