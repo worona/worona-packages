@@ -1,23 +1,13 @@
+/* eslint-disable */
 require('babel-polyfill');
 var pkg = require('../../../src/' + process.env.SERVICE_ENV);
 var pkgJson = require('../../../package.json');
 var packageDevelopment = require('worona-deps').packageDevelopment;
 
-packageDevelopment(Object.assign(pkg, {
-  name: pkgJson.name,
-  namespace: pkgJson.worona.namespace,
-  woronaInfo: {
-    name: pkgJson.name,
-    id: pkgJson.name,
-    namespace: pkgJson.worona.namespace,
-    niceName: pkgJson.worona.niceName,
-    type: pkgJson.worona.type,
-    menu: {
-      category: 'Development',
-      order: 10,
-    },
-    services: pkgJson.worona.services,
-  },
-}));
+packageDevelopment(Object.assign(
+  pkg,
+  { woronaInfo: Object.assign(pkgJson.worona, { name: pkgJson.name }) },
+  pkgJson.name, pkgJson.worona.dashboard.namespace
+));
 
 console.log('Development package ' + pkgJson.name + ' loaded!');
