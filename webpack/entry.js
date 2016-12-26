@@ -6,8 +6,7 @@ var packageDevelopment = require('worona-deps').packageDevelopment;
 
 packageDevelopment(Object.assign(
   pkg,
-  { woronaInfo: Object.assign(pkgJson.worona, { name: pkgJson.name }) },
-  pkgJson.name, pkgJson.worona.dashboard.namespace
-));
+  { woronaInfo: Object.assign(pkgJson.worona, { name: pkgJson.name }) }
+), pkgJson.name, pkgJson.worona.dashboard.namespace);
 
 console.log('Development package ' + pkgJson.name + ' loaded!');
