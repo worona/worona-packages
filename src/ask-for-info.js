@@ -124,7 +124,7 @@ export default async ({ packageJson }) => {
         type: 'checkbox',
         name: 'tabs',
         choices: ['app', 'fbia', 'amp'],
-        message: 'Services where a menu entrie should appear:',
+        message: 'Services where a menu entry should appear:',
         default() { return ['app']; },
         validate(tabs) { return tabs.length > 0 || 'Select at least one service.'; },
     }];
@@ -147,27 +147,27 @@ export default async ({ packageJson }) => {
       const menu = {};
       for (const tab of worona[service].tabs) {
         console.log();
-        const entrie = await inquirer.prompt([{
+        const entry = await inquirer.prompt([{
           type: 'input',
-          name: 'name',
-          message: `Name for the menu entrie on the '${tab}' tab:`,
+          name: 'niceName',
+          message: `Name for the menu entry on the '${tab}' tab:`,
           validate(name) { return (name !== '') || 'Please add a name.'; },
         }, {
           type: 'list',
           name: 'category',
           choices: ['General', 'Themes', 'Extensions', 'Publish'],
-          message: `Category for the menu entrie on the '${tab}' tab:`,
+          message: `Category for the menu entry on the '${tab}' tab:`,
         }, {
           type: 'input',
           name: 'order',
-          message: `Order for the menu entrie on the '${tab}' tab (between 1 and 100):`,
+          message: `Order for the menu entry on the '${tab}' tab (between 1 and 100):`,
           default: 10,
           filter(number) { return parseInt(number); },
           validate(order) {
             const number = parseInt(order);
             return (!isNaN(number) && number >= 1 && number <= 100) || 'Please enter a number between 1 and 100.' },
         }]);
-        menu[tab] = entrie;
+        menu[tab] = entry;
         worona[service].menu = menu;
         delete worona[service].tabs;
       }

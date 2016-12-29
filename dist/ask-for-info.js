@@ -50,7 +50,7 @@ exports.default = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(_ref2) {
     var packageJson = _ref2.packageJson;
 
-    var npm, _ref3, services, worona, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, service, _ref4, type, _ref5, namespace, repositoryQuestions, dashboardQuestions, questions, answers, menu, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, tab, entrie, repo;
+    var npm, _ref3, services, worona, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, service, _ref4, type, _ref5, namespace, repositoryQuestions, dashboardQuestions, questions, answers, menu, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, tab, entry, repo;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -245,7 +245,7 @@ exports.default = function () {
               type: 'checkbox',
               name: 'tabs',
               choices: ['app', 'fbia', 'amp'],
-              message: 'Services where a menu entrie should appear:',
+              message: 'Services where a menu entry should appear:',
               default: function _default() {
                 return ['app'];
               },
@@ -297,8 +297,8 @@ exports.default = function () {
             _context.next = 52;
             return _inquirer2.default.prompt([{
               type: 'input',
-              name: 'name',
-              message: 'Name for the menu entrie on the \'' + tab + '\' tab:',
+              name: 'niceName',
+              message: 'Name for the menu entry on the \'' + tab + '\' tab:',
               validate: function validate(name) {
                 return name !== '' || 'Please add a name.';
               }
@@ -306,11 +306,11 @@ exports.default = function () {
               type: 'list',
               name: 'category',
               choices: ['General', 'Themes', 'Extensions', 'Publish'],
-              message: 'Category for the menu entrie on the \'' + tab + '\' tab:'
+              message: 'Category for the menu entry on the \'' + tab + '\' tab:'
             }, {
               type: 'input',
               name: 'order',
-              message: 'Order for the menu entrie on the \'' + tab + '\' tab (between 1 and 100):',
+              message: 'Order for the menu entry on the \'' + tab + '\' tab (between 1 and 100):',
               default: 10,
               filter: function filter(number) {
                 return parseInt(number);
@@ -322,9 +322,9 @@ exports.default = function () {
             }]);
 
           case 52:
-            entrie = _context.sent;
+            entry = _context.sent;
 
-            menu[tab] = entrie;
+            menu[tab] = entry;
             worona[service].menu = menu;
             delete worona[service].tabs;
 
