@@ -6,9 +6,9 @@ export default async ({ service, env }) => {
   const path = `node_modules/.worona/${service}/${env}`;
   mkdirSync(path);
   console.log('Downloading the needed files... please wait.');
-  const manifest = await request(`https://backend.worona.io/packages/dist/vendors-${service}-worona/${service}/${env}/json/manifest.json`);
+  const manifest = await request(`https://prebackend.worona.io/packages/dist/vendors-${service}-worona/${service}/${env}/json/manifest.json`);
   writeFileSync(`${path}/vendors-manifest.json`, JSON.stringify(manifest.body, null, 2));
-  const core = await request(`https://backend.worona.io/api/v1/settings/package-development/${service}/${env}`);
+  const core = await request(`https://prebackend.worona.io/api/v1/settings/package-development/${service}/${env}`);
   writeFileSync(`${path}/core-files.json`, JSON.stringify(core.body, null, 2));
   console.log('Downloading finished.\n');
 };

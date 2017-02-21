@@ -49,7 +49,7 @@ var htmlWebpackPlugin = function(config) {
     coreFile: files.core,
     devServer: 'http://localhost:3333',
     window: {
-      publicPath: 'https://cdn.worona.io/packages/dist/',
+      publicPath: 'https://precdn.worona.io/packages/dist/',
       __worona__: { [config.env]: true, [config.location]: true },
     },
     appMountId: 'root',
