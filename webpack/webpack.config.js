@@ -46,7 +46,10 @@ module.exports = {
     port: 3333,
     historyApiFallback: true,
   },
-  postcss: function() { return [require('postcss-cssnext')()]; },
+  postcss: function() { return [
+    require('postcss-import')(),
+    require('postcss-cssnext')(),
+  ]; },
   stats: { children: false },
   plugins: pluginsArr,
 };
