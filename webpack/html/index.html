@@ -9,6 +9,14 @@
 <% for (var css in htmlWebpackPlugin.files.css) { %>
   <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
 <% } %>
+<script src="//ced.sascdn.com/tag/620/smart.js"; type="text/javascript" async></script>
+<script type="text/javascript">
+    var sas = sas || {};
+    sas.cmd = sas.cmd || [];
+    sas.cmd.push(function() {
+        sas.setup({ networkid: 620, domain: "//www5.smartadserver.com", async: true });
+    });
+</script>
 </head>
 <body>
 <% if (htmlWebpackPlugin.options.window) { %>
